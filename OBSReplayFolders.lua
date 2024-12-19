@@ -24,6 +24,7 @@ function obs_frontend_callback(event)
 			print("Moving " .. path .. " to " .. folder)
 			move(path, folder)
 		end
+		
 	end
 end
 
@@ -42,12 +43,12 @@ function get_running_game_title()
 	local path = ffi.new("char[?]", 260)
 	local result = detect_game.get_running_fullscreen_game_path(path, 260)
 	if result ~= 0 then
-		return nil
+		return "Desktop"
 	end
 	result = ffi.string(path)
 	local len = #result
 	if len == 0 then
-		return nil
+		return "Desktop"
 	end
 	local max = len - 4
 	local i = max
@@ -62,12 +63,13 @@ function get_running_game_title()
 end
 
 function move(path, folder)
-	local sep = string.match(path, "^.*()/")
-	local root = string.sub(path, 1, sep) .. folder
-	local file_name = string.sub(path, sep, string.len(path))
-	local adjusted_path = root .. file_name
-	if obs.os_file_exists(root) == false then
-		obs.os_mkdir(root)
-	end
-	obs.os_rename(path, adjusted_path)
+    local sep = string.match(path, "^.*()/")
+    local root = string.sub(path, 1, sep) .. folder
+    local file_name = string.sub(path, sep + 1, string.len(path))
+    local game_filename = get_running_game_title() .. "-" .. file_name
+    local adjusted_path = root .. "\\" .. game_filename
+    if obs.os_file_exists(root) == false then
+        obs.os_mkdir(root)
+    end
+    obs.os_rename(path, adjusted_path)
 end
