@@ -1,9 +1,9 @@
 obs = obslua
 
 function script_description()
-	return [[Saves replays to sub-folders using the current fullscreen video game executable name.
+	return [[Saves replays to sub-folders and rename them based on the current fullscreen video game executable name.
 	
-Author: redraskal]]
+Author: redraskal, further enhancments done by Emiukabe]]
 end
 
 function script_load()
