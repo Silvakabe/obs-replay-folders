@@ -13,7 +13,7 @@ function detect_current_game(props, prop)
 	if game ~= nil then
 		current_game = game
 	else
-		current_game = "No game detected"
+		current_game = "Desktop"
 	end
 	obs.obs_property_set_description(obs.obs_properties_get(props, "current_game_info"), "Current Game: " .. current_game)
 	return true
@@ -61,12 +61,12 @@ function get_running_game()
 	local name = ffi.new("char[?]", 260)
 	local result = detect_fullscreen.get_fullscreen_window_friendly_name(name, 260)
 	if result ~= 0 then
-		return nil
+		return "Desktop"
 	end
 	result = ffi.string(name)
 	local len = #result
 	if len == 0 then
-		return nil
+		return "Desktop"
 	end
 	return result
 end
@@ -74,8 +74,9 @@ end
 function move(path, folder)
 	local sep = string.match(path, "^.*()/")
 	local root = string.sub(path, 1, sep) .. folder
-	local file_name = string.sub(path, sep, string.len(path))
-	local adjusted_path = root .. file_name
+	local file_name = string.sub(path, sep + 1, string.len(path))
+	local game_filename = get_running_game() .. "-" .. file_name
+	local adjusted_path = root .. "\\" .. game_filename
 	if obs.os_file_exists(root) == false then
 		obs.os_mkdir(root)
 	end
